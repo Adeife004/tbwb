@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap');
+
+/* ── DESIGN TOKENS ── */
+:root {
+  --red:        #C0392B;
+  --red-dark:   #96281B;
+  --red-muted:  #E8D5D3;
+  --charcoal:   #1C1C1C;
+  --charcoal-2: #2E2E2E;
+  --charcoal-3: #555555;
+  --cream:      #FAF7F2;
+  --cream-2:    #F0EBE3;
+  --white:      #FFFFFF;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Source Serif 4', Georgia, serif;
+
+  --max-width: 1100px;
+  --radius: 4px;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background-color: var(--cream);
+  color: var(--charcoal);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; width: 100%; object-fit: cover; }
+a { color: inherit; text-decoration: none; }
+button { cursor: none; border: none; background: none; font-family: inherit; }
+
+/* ── CUSTOM CURSOR ── */
+* { cursor: none !important; }
+
+.cursor-outer {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--red);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease,
+              border-color 0.3s ease, background 0.3s ease,
+              opacity 0.3s ease;
+  mix-blend-mode: multiply;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--red);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s ease, background 0.3s ease, width 0.3s, height 0.3s;
+}
+
+.cursor-outer.hovered {
+  width: 60px;
+  height: 60px;
+  background: rgba(192, 57, 43, 0.08);
+  border-color: var(--red-dark);
+}
+
+.cursor-dot.hovered {
+  width: 4px;
+  height: 4px;
+  background: var(--red-dark);
+}
+
+.cursor-outer.clicking {
+  width: 30px;
+  height: 30px;
+  background: rgba(192, 57, 43, 0.15);
+}
+
+/* ── PAGE TRANSITIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fadeUp    { animation: fadeUp 0.7s ease forwards; }
+.animate-fadeIn    { animation: fadeIn 0.6s ease forwards; }
+.animate-slideLeft { animation: slideInLeft 0.7s ease forwards; }
+.animate-scaleIn   { animation: scaleIn 0.5s ease forwards; }
+
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.25s; opacity: 0; }
+.delay-3 { animation-delay: 0.4s; opacity: 0; }
+.delay-4 { animation-delay: 0.55s; opacity: 0; }
+.delay-5 { animation-delay: 0.7s; opacity: 0; }
