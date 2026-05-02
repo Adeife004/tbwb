@@ -190,7 +190,8 @@
 .hero__scroll-hint {
   position: absolute;
   bottom: 2.5rem;
-  left: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -531,8 +532,7 @@
   }
 
   .hero__scroll-hint {
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 1.5rem;
   }
 }
 
@@ -558,6 +558,10 @@
   .featured__body { padding: 2rem 1.5rem; }
 
   .articles-grid { grid-template-columns: 1fr; }
+
+  .hero__scroll-hint {
+    display: none;
+  }
 }
 
 /* ── SKELETONS ── */

@@ -22,18 +22,9 @@ export default function Navbar() {
         <span className="navbar__logo-text">TBWB</span>
       </Link>
       <ul className={`navbar__links ${menuOpen ? 'navbar__links--open' : ''}`}>
-        <li>
-          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
-        </li>
-        <li>
-          <Link to="/articles" className={location.pathname === '/articles' ? 'active' : ''}>Articles</Link>
-        </li>
-        <li>
-          <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
-        </li>
-        <li>
-          <Link to="/write" className={`navbar__write ${location.pathname === '/write' ? 'active' : ''}`}>Write</Link>
-        </li>
+        <li><Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link></li>
+        <li><Link to="/articles" className={location.pathname === '/articles' ? 'active' : ''}>Articles</Link></li>
+        <li><Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link></li>
       </ul>
       <button
         className={`navbar__burger ${menuOpen ? 'navbar__burger--open' : ''}`}

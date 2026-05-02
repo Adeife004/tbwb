@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { useState, useEffect } from 'react'
 import { getArticles, getArticleBySlug } from '../data/articles'
 import Comments from '../components/Comments'
@@ -29,6 +30,7 @@ export default function ArticlePage() {
   const [loading, setLoading]     = useState(true)
   const [copied, setCopied]       = useState(false)
   const [scrollPct, setScrollPct] = useState(0)
+  const [related, setRelated] = useState([])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -58,6 +60,14 @@ export default function ArticlePage() {
     supabase.rpc('increment_views', { article_slug: slug })
   }, [slug])
 
+  useEffect(() => {
+  if (!article || !allArticles.length) return
+  const rel = allArticles
+    .filter(a => a.slug !== slug && a.category === article.category)
+    .slice(0, 3)
+  setRelated(rel)
+}, [article, allArticles, slug])
+
   if (loading) return (
     <div className="article-loading">
       <div className="article-loading__bar" />
@@ -79,6 +89,19 @@ export default function ArticlePage() {
 
   return (
     <div className="article-page">
+      <Helmet>
+      <title>{article.title} — TBWB</title>
+      <meta name="description" content={article.subtitle || article.excerpt} />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" content={article.title} />
+      <meta property="og:description" content={article.subtitle || article.excerpt} />
+      <meta property="og:image" content={article.cover_image} />
+      <meta property="og:url" content={pageUrl} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={article.title} />
+      <meta name="twitter:description" content={article.subtitle || article.excerpt} />
+      <meta name="twitter:image" content={article.cover_image} />
+    </Helmet>
 
       <div className="progress-bar" style={{ width: `${scrollPct}%` }} />
 
@@ -107,6 +130,18 @@ export default function ArticlePage() {
           {article.body.split('\n\n').map((para, i) => (
             <p key={i}>{para}</p>
           ))}
+          {/* Author */}
+{(article.author_name || article.author_avatar) && (
+  <div className="article-author">
+    {article.author_avatar && (
+      <img src={article.author_avatar} alt={article.author_name} className="article-author__avatar" />
+    )}
+    <div className="article-author__info">
+      <span className="article-author__label">Written by</span>
+      <span className="article-author__name">{article.author_name || 'The Boy Without Blueprint'}</span>
+    </div>
+  </div>
+)}
         </div>
 
         {/* Share */}
@@ -141,6 +176,30 @@ export default function ArticlePage() {
             </Link>
           )}
         </div>
+
+        {/* Related Articles */}
+{related.length > 0 && (
+  <div className="related">
+    <div className="related__label">
+      <span>More in {article.category}</span>
+    </div>
+    <div className="related__grid">
+      {related.map(r => (
+        <Link to={`/article/${r.slug}`} key={r.slug} className="related__card">
+          <div className="related__img-wrap">
+            <img src={r.cover_image} alt={r.title} />
+          </div>
+          <div className="related__body">
+            <span className="related__category">{r.category}</span>
+            <h3 className="related__title">{r.title}</h3>
+            <p className="related__excerpt">{r.excerpt}</p>
+            <span className="related__read">Read →</span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  </div>
+)}
 
         <Comments articleSlug={slug} />
       </div>
