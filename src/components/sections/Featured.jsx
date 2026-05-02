@@ -1,7 +1,16 @@
 import { Link } from 'react-router-dom'
-import { articles } from '../../data/articles'
 
-export default function Featured() {
+export default function Featured({ articles, loading }) {
+  if (loading) return (
+    <section className="featured">
+      <div className="featured__inner">
+        <div className="section-label">Featured</div>
+        <div className="featured__skeleton" />
+      </div>
+    </section>
+  )
+
+  if (!articles.length) return null
   const featured = articles[0]
 
   return (
@@ -10,7 +19,7 @@ export default function Featured() {
         <div className="section-label">Featured</div>
         <Link to={`/article/${featured.slug}`} className="featured__card">
           <div className="featured__img-wrap">
-            <img src={featured.coverImage} alt={featured.title} />
+            <img src={featured.cover_image} alt={featured.title} />
             <div className="featured__overlay" />
           </div>
           <div className="featured__body">

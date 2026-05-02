@@ -1,16 +1,19 @@
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { articles } from '../data/articles'
+import { getArticles, getArticleBySlug } from '../data/articles'
 import Comments from '../components/Comments'
+import { supabase } from '../lib/supabase'
 import './ArticlePage.css'
 
 function readingTime(text) {
-  const words = text.trim().split(/\s+/).length
-  return Math.ceil(words / 200)
+  return Math.ceil(text.trim().split(/\s+/).length / 200)
 }
 
 function shareOnX(title, url) {
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`, '_blank')
+  window.open(
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+    '_blank'
+  )
 }
 
 function copyLink(url, setCopied) {
@@ -21,26 +24,45 @@ function copyLink(url, setCopied) {
 
 export default function ArticlePage() {
   const { slug } = useParams()
-  const navigate = useNavigate()
-  const [copied, setCopied] = useState(false)
+  const [article, setArticle]     = useState(null)
+  const [allArticles, setAll]     = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [copied, setCopied]       = useState(false)
   const [scrollPct, setScrollPct] = useState(0)
-
-  const article = articles.find(a => a.slug === slug)
 
   useEffect(() => {
     window.scrollTo(0, 0)
+    setLoading(true)
+    Promise.all([
+      getArticleBySlug(slug),
+      getArticles()
+    ]).then(([art, all]) => {
+      setArticle(art)
+      setAll(all)
+      setLoading(false)
+    })
   }, [slug])
 
   useEffect(() => {
     const onScroll = () => {
       const el = document.documentElement
-      const scrolled = el.scrollTop
       const total = el.scrollHeight - el.clientHeight
-      setScrollPct(total > 0 ? (scrolled / total) * 100 : 0)
+      setScrollPct(total > 0 ? (el.scrollTop / total) * 100 : 0)
     }
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (!slug) return
+    supabase.rpc('increment_views', { article_slug: slug })
+  }, [slug])
+
+  if (loading) return (
+    <div className="article-loading">
+      <div className="article-loading__bar" />
+    </div>
+  )
 
   if (!article) return (
     <div className="article-not-found">
@@ -49,21 +71,20 @@ export default function ArticlePage() {
     </div>
   )
 
-  const currentIndex = articles.findIndex(a => a.slug === slug)
-  const prev = articles[currentIndex - 1]
-  const next = articles[currentIndex + 1]
+  const currentIndex = allArticles.findIndex(a => a.slug === slug)
+  const prev = allArticles[currentIndex + 1]
+  const next = allArticles[currentIndex - 1]
   const pageUrl = window.location.href
   const mins = readingTime(article.body)
 
   return (
     <div className="article-page">
 
-      {/* Reading progress bar */}
       <div className="progress-bar" style={{ width: `${scrollPct}%` }} />
 
       {/* Hero */}
       <div className="article-hero">
-        <img src={article.coverImage} alt={article.title} className="article-hero__img" />
+        <img src={article.cover_image} alt={article.title} className="article-hero__img" />
         <div className="article-hero__overlay" />
         <div className="article-hero__content animate-fadeUp delay-1">
           <Link to="/articles" className="article-back">← All Articles</Link>
@@ -74,6 +95,8 @@ export default function ArticlePage() {
             <span>{article.date}</span>
             <span className="article-meta__dot">·</span>
             <span>{mins} min read</span>
+            <span className="article-meta__dot">·</span>
+            <span>{article.views ?? 0} views</span>
           </div>
         </div>
       </div>
@@ -119,9 +142,7 @@ export default function ArticlePage() {
           )}
         </div>
 
-        {/* Comments */}
         <Comments articleSlug={slug} />
-
       </div>
     </div>
   )

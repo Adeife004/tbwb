@@ -8,7 +8,7 @@ export default function Hero() {
 
       <div className="hero__content">
         <div className="hero__left animate-fadeUp delay-1">
-          <span className="hero__eyebrow">Est. 2026 · Lagos, Nigeria</span>
+          <span className="hero__eyebrow">Est. 2026 · Ogun, Nigeria</span>
           <h1 className="hero__title">
             The Boy<br />
             <em>Without</em><br />
@@ -19,8 +19,12 @@ export default function Hero() {
             No map. No manual. Just the truth as it comes.
           </p>
           <div className="hero__actions">
-            <Link to="/articles" className="btn btn--red">Read Articles</Link>
-            <Link to="/about" className="btn btn--ghost">About the Writer</Link>
+            <Link to="/articles" className="btn btn--red">
+              <span>Read Articles</span>
+            </Link>
+            <Link to="/about" className="btn btn--ghost">
+              <span>About the Writer</span>
+            </Link>
           </div>
         </div>
 

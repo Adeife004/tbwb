@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { articles } from '../data/articles'
+import { getArticles } from '../data/articles'
 import './Articles.css'
 
 function readingTime(text) {
@@ -7,10 +8,19 @@ function readingTime(text) {
 }
 
 export default function Articles() {
+  const [articles, setArticles] = useState([])
+  const [loading, setLoading]   = useState(true)
+
+  useEffect(() => {
+    getArticles().then(data => {
+      setArticles(data)
+      setLoading(false)
+    })
+  }, [])
+
   return (
     <main className="articles-page">
 
-      {/* Header */}
       <div className="articles-page__header">
         <div className="articles-page__header-inner">
           <span className="articles-page__eyebrow animate-fadeUp delay-1">
@@ -20,38 +30,47 @@ export default function Articles() {
             Every Word,<br /><em>Unfiltered</em>
           </h1>
           <p className="articles-page__desc animate-fadeUp delay-3">
-            {articles.length} essays and counting.
+            {loading ? '...' : `${articles.length} essays and counting.`}
           </p>
         </div>
       </div>
 
-      {/* List */}
       <div className="articles-page__list">
         <div className="articles-page__list-inner">
-          {articles.map((article, i) => (
-            <Link
-              to={`/article/${article.slug}`}
-              className="articles-row"
-              key={article.id}
-              style={{ animationDelay: `${i * 0.08}s` }}
-            >
-              <div className="articles-row__img-wrap">
-                <img src={article.coverImage} alt={article.title} />
-              </div>
 
-              <div className="articles-row__body">
-                <div className="articles-row__top">
-                  <span className="articles-row__meta">
-                    {article.date} · {readingTime(article.body)} min read
-                  </span>
+          {loading ? (
+            [1,2,3].map(i => (
+              <div key={i} className="articles-row-skeleton" />
+            ))
+          ) : articles.length === 0 ? (
+            <div className="articles-empty">
+              <p>No articles yet. Check back soon.</p>
+            </div>
+          ) : (
+            articles.map((article, i) => (
+              <Link
+                to={`/article/${article.slug}`}
+                className="articles-row"
+                key={article.id}
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                <div className="articles-row__img-wrap">
+                  <img src={article.cover_image} alt={article.title} />
                 </div>
-                <h2 className="articles-row__title">{article.title}</h2>
-                <p className="articles-row__excerpt">{article.excerpt}</p>
-              </div>
+                <div className="articles-row__body">
+                  <div className="articles-row__top">
+                    <span className="articles-row__meta">
+                      {article.date} · {readingTime(article.body)} min read
+                    </span>
+                  </div>
+                  <h2 className="articles-row__title">{article.title}</h2>
+                  <p className="articles-row__excerpt">{article.excerpt}</p>
+                </div>
+                <div className="articles-row__arrow">→</div>
+              </Link>
+            ))
+          )}
 
-              <div className="articles-row__arrow">→</div>
-            </Link>
-          ))}
         </div>
       </div>
 

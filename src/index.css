@@ -116,3 +116,8 @@ button { cursor: none; border: none; background: none; font-family: inherit; }
 .delay-3 { animation-delay: 0.4s; opacity: 0; }
 .delay-4 { animation-delay: 0.55s; opacity: 0; }
 .delay-5 { animation-delay: 0.7s; opacity: 0; }
+
+/* Push footer to bottom while content loads */
+.page-wrapper {
+  min-height: 100vh;
+}

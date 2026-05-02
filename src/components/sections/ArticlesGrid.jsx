@@ -1,8 +1,20 @@
 import { Link } from 'react-router-dom'
-import { articles } from '../../data/articles'
 
-export default function ArticlesGrid() {
+export default function ArticlesGrid({ articles, loading }) {
   const rest = articles.slice(1)
+
+  if (loading) return (
+    <section className="grid-section">
+      <div className="grid-section__inner">
+        <div className="section-label">More Writing</div>
+        <div className="articles-grid">
+          {[1,2].map(i => <div key={i} className="article-card-skeleton" />)}
+        </div>
+      </div>
+    </section>
+  )
+
+  if (!rest.length) return null
 
   return (
     <section className="grid-section">
@@ -17,7 +29,7 @@ export default function ArticlesGrid() {
               style={{ animationDelay: `${i * 0.15}s` }}
             >
               <div className="article-card__img-wrap">
-                <img src={article.coverImage} alt={article.title} />
+                <img src={article.cover_image} alt={article.title} />
               </div>
               <div className="article-card__body">
                 <span className="article-card__category">{article.category}</span>
